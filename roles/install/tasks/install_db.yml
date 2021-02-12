@@ -1,0 +1,12 @@
+---
+# tasks file for install_db
+1.2	Databases
+				(18.1.0.1.0) Enterprise Edition and future fix packs	(18.1.0.1.0) Enterprise Edition
+Oracle Database 18c Release 1
+				(18.1.0.1.0) Standard Edition and future fix packs	(18.1.0.1.0) Standard Edition
+
+We have to create 6 users for Workflow Server and 6 users for Workflow Center
+Process Center users and scripts:
+Please find the attached script & users.
+ 
+Please find the attached Scripts & users:

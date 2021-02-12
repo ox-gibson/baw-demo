@@ -1,0 +1,193 @@
+---
+# PC or PS
+product_type: PC
+# Single or Three
+cluster_type: Single
+# Oracle, DB2, or SQLServer  
+database_type: DB2
+license_type: Advanced
+manual_db_steps: false
+copy_db_files: false
+client_db_dir: /home/bpmadmin
+
+property_file_name: "{{ license_type }}-{{ product_type }}-{{ cluster_type }}Cluster-{{ database_type }}.properties"
+# defaults file for install_baw
+server_name: SingleClusterMember1
+cluster_name: SingleCluster
+user_name: bpmadmin
+user_pass: password
+user_home: /home/bpmadmin 
+
+install_packages:
+  - libXp
+  - rpm-build
+
+install_kernel_params:
+  - { name: "kernel.msgmax", value: 8192 }
+  - { name: "kernel.msgmnb", value: 16384 }
+  - { name: "kernel.sem", value: "250 128000 32 1024" }
+  - { name: "kernel.shmall", value: 2511724800 }
+  - { name: "kernel.shmmax", value: 307200000 }
+  - { name: "kernel.shmmni", value: 2000 }
+
+install_ulimits:
+  - { user: "{{ user_name }}", limit_type: 'soft', limit_item: 'stack', value: 32768 }
+  - { user: "{{ user_name }}", limit_type: 'hard', limit_item: 'stack', value: 32768 }
+  - { user: "{{ user_name }}", limit_type: 'soft', limit_item: 'nproc', value: 16384 }
+  - { user: "{{ user_name }}", limit_type: 'hard', limit_item: 'nproc', value: 16384 }
+  - { user: "{{ user_name }}", limit_type: 'soft', limit_item: 'nofile', value: 131072 }
+  - { user: "{{ user_name }}", limit_type: 'hard', limit_item: 'nofile', value: 131072 }
+  - { user: 'root', limit_type: 'soft', limit_item: 'nofile', value: 131072 }
+  - { user: 'root', limit_type: 'hard', limit_item: 'nofile', value: 131072 }
+
+server_list:
+  - { ip: '10.0.0.1', fqdn: 'server1.something.com', hostname: 'server1' }
+  - { ip: '10.0.0.2', fqdn: 'server2.something.com', hostname: 'server2' }
+  - { ip: '10.0.0.3', fqdn: 'server3.something.com', hostname: 'server3' }
+  - { ip: '10.0.0.4', fqdn: 'server4.something.com', hostname: 'server4' }
+
+directory_structure:
+#  - { path: '/product', owner: {{ user_name }}, group: {{ user_group }}, mode: '0644' }
+  - { path: '/product', mode: '0775' }
+  - { path: "{{ baw_download_path }}", mode: '0775' }
+  - { path: "{{ javasdk_path }}", mode: '0775' }
+#  - { path: "{{ jdbcdriver_dir }}", mode: '0775' }
+#  - { path: "{{ case_forms_dir }}", mode: '0755' }
+
+baw_download_url:
+  - 'https://ak-dsw-mul.dhe.ibm.com/sdfdl/v2/fulfill/CNTA0ML/Xa.2/Xb.ll8YenSwxvxSoxnfiA3E8Xt1blNONlBTTkU_PpljoeJJd3SwYFk/Xc.CNTA0ML/BAW_18_0_0_1_Linux_x86_1_of_3.tar.gz/Xd./Xf.lPr.A6VR/Xg.10907499/Xi./XY.sm/XZ.O7I0UCLInOafbVzHnyx0MH09L0U/BAW_18_0_0_1_Linux_x86_1_of_3.tar.gz#anchor'
+  - 'https://ak-dsw-mul.dhe.ibm.com/sdfdl/v2/fulfill/CNTA1ML/Xa.2/Xb.ll8YenSwxvxSoxnfiA3E8Xt1blNONlBTTkU_PpljoeJJd8XuwfE/Xc.CNTA1ML/BAW_18_0_0_1_Linux_x86_2_of_3.tar.gz/Xd./Xf.lPr.A6VR/Xg.10907523/Xi./XY.sm/XZ.VhGbQ9kpZLcoSfd00PHbn1pybhk/BAW_18_0_0_1_Linux_x86_2_of_3.tar.gz#anchor'
+  - 'https://ak-dsw-mul.dhe.ibm.com/sdfdl/v2/fulfill/CNTA2ML/Xa.2/Xb.ll8YenSwxvxSoxnfiA3E8Xt1blNONlBTTkU_PpljoeJJd3dycGk/Xc.CNTA2ML/BAW_18_0_0_1_Linux_x86_3_of_3.tar.gz/Xd./Xf.lPr.A6VR/Xg.10907524/Xi./XY.sm/XZ.-VlnrxdWZUzifoxIAuMtOn9nhiA/BAW_18_0_0_1_Linux_x86_3_of_3.tar.gz#anchor'
+baw_download_path: /data/bpm
+
+im_path: /opt/IBM/InstallationManager/eclipse/tools
+was_install_ver: com.ibm.websphere.ND.v85
+was_repo: /data/bpm/repository/WAS/repository.config
+was_default_imcl_dir: /opt/IBM/InstallationManager/eclipse/tools
+baw_repo: /data/bpm/repository/WBI/repository.config 
+baw_install_ver: com.ibm.bpm.ADV.v85
+product_install_dir: /product/bpm86
+shared_res_dir: /product/IMShared
+was_properties: user.wasjava=java8
+java_download_url: https://ak-delivery04-mul.dhe.ibm.com/sar/CMA/WSA/060kt/0/8.0.2.10-WS-IBMWASJAVA-Linux.zip
+javasdk_path: /data/javasdk
+java_install_ver: com.ibm.websphere.IBMJAVA.v80
+java_repo: /data/javasdk/repository.config
+sdk_name: 1.8_64_bundled 
+
+jdbcdriver_dir: "{{ product_install_dir }}/jdbcdrivers/{{ database_type }}/"
+
+SingleCluster_PC_prop:
+  - { regex: "value", line: "value"}
+
+SingleCluster_PS_prop:
+  - { regex: "value", line: "value"}
+
+oracle_driver_list:
+  - drivername1
+  - drivername2
+  - drivername3
+
+sqlserver_driver_list:
+  - drivername1
+  - drivername2
+  - drivername3
+
+
+###### PROPERTY FILE VARS ######
+schemaCreation: false
+deadmin_name: deadmin
+deadmin_pass: password
+db_user: bpminst1 
+db_pass: bpminst1
+db_hostname: 10.11.13.194
+db_data_path: "/home/{{ db_user }}/storage"
+wasadmin_name: wasadmin
+wasadmin_pass: password
+host_name: localhost
+dmgr_profile_name: Dmgrpc01
+dmgr_port: ""
+node_profile_name: Nodepc01
+node_port: ""
+cmn_db_name: PCCMNDB 
+bpm_db_name: PCBPMDB
+cpe_db_name: PCICNDB
+dos_db_name: PCDOSDB
+tos_db_name: PCTOSDB
+pdw_db_name: PCPDWDB
+case_forms_dir: "{{ product_install_dir }}/CaseManagerForms"
+
+######## PROPERTY FILE UPDATE LISTS ######## 
+Advanced_PC_Single_DB2_prop:
+  - { regex: "bpm.de.type", line: "bpm.de.type={{ license_type }}" }
+  - { regex: "bpm.de.deferSchemaCreation", line: "bpm.de.deferSchemaCreation={{ schemaCreation | lower }}" }
+  - { regex: "bpm.de.authenticationAlias.1.user", line: "bpm.de.authenticationAlias.1.user={{ deadmin_name }}" }
+  - { regex: "bpm.de.authenticationAlias.1.password", line: "bpm.de.authenticationAlias.1.password={{ deadmin_pass }}" }
+  - { regex: "bpm.de.authenticationAlias.2.user", line: "bpm.de.authenticationAlias.2.user={{ db_user }}" }
+  - { regex: "bpm.de.authenticationAlias.2.password", line: "bpm.de.authenticationAlias.2.password={{ db_pass }}" }
+  - { regex: "bpm.cell.authenticationAlias.1.user", line: "bpm.cell.authenticationAlias.1.user={{ wasadmin_name }}" }
+  - { regex: "bpm.cell.authenticationAlias.1.password", line: "bpm.cell.authenticationAlias.1.password={{ wasadmin_pass }}" }
+  - { regex: "bpm.dmgr.hostname", line: "bpm.dmgr.hostname={{ host_name }}" }
+  - { regex: "bpm.dmgr.installPath", line: "bpm.dmgr.installPath={{ product_install_dir }}" }
+  - { regex: "bpm.dmgr.profileName", line: "bpm.dmgr.profileName={{ dmgr_profile_name }}" }
+  - { regex: "bpm.dmgr.initialPortAssignment", line: "bpm.dmgr.initialPortAssignment={{ dmgr_port }}" }
+  - { regex: "bpm.de.node.1.hostname", line: "bpm.de.node.1.hostname={{ host_name }}" }
+  - { regex: "bpm.de.node.1.installPath", line: "bpm.de.node.1.installPath={{ product_install_dir }}" }
+  - { regex: "bpm.de.node.1.profileName", line: "bpm.de.node.1.profileName={{ node_profile_name }}" }
+  - { regex: "bpm.de.node.1.initialPortAssignment", line: "bpm.de.node.1.initialPortAssignment={{ node_port }}" }
+  - { regex: "bpm.de.db.1.hostname", line: "bpm.de.db.1.hostname={{ db_hostname }}" }
+  - { regex: "bpm.de.db.2.hostname", line: "bpm.de.db.2.hostname={{ db_hostname }}" }
+  - { regex: "bpm.de.db.3.hostname", line: "bpm.de.db.3.hostname={{ db_hostname }}" }
+  - { regex: "bpm.de.db.4.hostname", line: "bpm.de.db.4.hostname={{ db_hostname }}" }
+  - { regex: "bpm.de.db.5.hostname", line: "bpm.de.db.5.hostname={{ db_hostname }}" }
+  - { regex: "bpm.de.db.6.hostname", line: "bpm.de.db.6.hostname={{ db_hostname }}" }
+  - { regex: "bpm.de.db.7.hostname", line: "bpm.de.db.7.hostname={{ db_hostname }}" }
+  - { regex: "bpm.de.db.1.databaseName", line: "bpm.de.db.1.databaseName={{ cmn_db_name }}" }
+  - { regex: "bpm.de.db.2.databaseName", line: "bpm.de.db.2.databaseName={{ bpm_db_name }}" }
+  - { regex: "bpm.de.db.3.databaseName", line: "bpm.de.db.3.databaseName={{ cpe_db_name }}" }
+  - { regex: "bpm.de.db.4.databaseName", line: "bpm.de.db.4.databaseName={{ dos_db_name }}" }
+  - { regex: "bpm.de.db.5.databaseName", line: "bpm.de.db.5.databaseName={{ tos_db_name }}" }
+  - { regex: "bpm.de.db.6.databaseName", line: "bpm.de.db.6.databaseName={{ pdw_db_name }}" }
+  - { regex: "bpm.de.db.7.databaseName", line: "bpm.de.db.7.databaseName={{ cmn_db_name }}" }
+  - { regex: "bpm.de.db.1.schema", line: "bpm.de.db.1.schema={{ db_user | upper }}" }
+  - { regex: "bpm.de.db.2.schema", line: "bpm.de.db.2.schema={{ db_user | upper }}" }
+  - { regex: "bpm.de.db.3.schema", line: "bpm.de.db.3.schema={{ db_user | upper }}" }
+  - { regex: "bpm.de.db.4.schema", line: "bpm.de.db.4.schema={{ db_user | upper }}" }
+  - { regex: "bpm.de.db.5.schema", line: "bpm.de.db.5.schema={{ db_user | upper }}" }
+  - { regex: "bpm.de.db.6.schema", line: "bpm.de.db.6.schema={{ db_user | upper }}" }
+  - { regex: "bpm.de.db.7.schema", line: "bpm.de.db.7.schema={{ db_user | upper }}" }
+  - { regex: "bpm.de.db.3.databaseDataDirectoryPath", line: "bpm.de.db.3.databaseDataDirectoryPath={{ db_data_path }}" }
+  - { regex: "bpm.de.db.4.databaseDataDirectoryPath", line: "bpm.de.db.4.databaseDataDirectoryPath={{ db_data_path }}" }
+  - { regex: "bpm.de.db.5.databaseDataDirectoryPath", line: "bpm.de.db.5.databaseDataDirectoryPath={{ db_data_path }}" }
+  - { regex: "bpm.de.caseManager.ibmFormsDirectory", line: "bpm.de.caseManager.ibmFormsDirectory={{ case_forms_dir }}" }
+  - { regex: "bpm.de.caseManager.ibmFormsTranslatorURL", line: "bpm.de.caseManager.ibmFormsTranslatorURL=http://{{ host_name }}:8085/translator" }
+
+Advanced_PS_Single_DB2_prop:
+Advanced_PC_Three_DB2_prop:
+Advanced_PS_Three_DB2_prop:
+
+Standard_PC_Single_DB2_prop:
+Standard_PS_Single_DB2_prop:
+Standard_PC_Three_DB2_prop:
+Standard_PS_Three_DB2_prop:
+
+Advanced_PC_Single_Oracle_prop:
+Advanced_PS_Single_Oracle_prop:
+Advanced_PC_Three_Oracle_prop:
+Advanced_PS_Three_Oracle_prop:
+
+Standard_PC_Single_Oracle_prop:
+Standard_PS_Single_Oracle_prop:
+Standard_PC_Three_Oracle_prop:
+Standard_PS_Three_Oracle_prop:
+
+Advanced_PC_Single_SQLServer_prop:
+Advanced_PS_Single_SQLServer_prop:
+Advanced_PC_Three_SQLServer_prop:
+Advanced_PS_Three_SQLServer_prop:
+
+Standard_PC_Single_SQLServer_prop:
+Standard_PS_Single_SQLServer_prop:
+Standard_PC_Three_SQLServer_prop:
+Standard_PS_Three_SQLServer_prop:
+

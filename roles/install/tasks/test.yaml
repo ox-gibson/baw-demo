@@ -1,0 +1,9 @@
+---
+- name: Setup Nodes
+  hosts: "baw" 
+  tasks:
+  - debug:
+      msg: |
+        WAS server url-     https://host_name:9043/ibm/console/login.do?action=secure
+        Process Portal url- https://host_name:9443/ProcessPortal
+        Process Admin url-  https://host_name:9443/ProcessAdmin

@@ -1,0 +1,44 @@
+---
+- name: Stop server
+  command: "{{ product_install_dir }}/profiles/{{ node_profile_name }}/bin/stopServer.sh {{ server_name }}" 
+  become: yes 
+  register: stop_server
+  failed_when: stop_server.rc != 0 and ("appears to be stopped" not in stop_server.stdout or "No server by this name" not in stop_server.stdout or "cannot be reached" not in stop_server.stdout )
+  ignore_errors: true
+- debug:
+    var: stop_server
+- name: Stop manager 
+  command: "{{ product_install_dir }}/profiles/{{ dmgr_profile_name }}/bin/stopManager.sh -user wasadmin -password password" 
+  become: yes 
+  register: stop_manager 
+  failed_when:  stop_manager.rc != 0 and "appears to be stopped" not in stop_manager.stdout
+- debug:
+    var: stop_manager
+- name: Remove profiles
+  command: "{{ product_install_dir }}/bin/manageprofiles.sh -delete -profileName {{ item }}"
+  become: yes
+  loop:
+    - Nodepc01
+    - Dmgrpc01
+- name: Remove profile folders
+  file:
+    path: "{{ product_install_dir }}/profiles/{{ item }}"
+    state: absent
+  become: yes
+  loop:
+    - "{{ node_profile_name }}"
+    - "{{ dmgr_profile_name }}"
+- debug:
+    msg: "Please delete schemas from db"
+#- name: Uninstall BAW
+#  command: >
+#    {{ was_default_imcl_dir }}/imcl uninstall com.ibm.bpm.ADV.v85 
+#    -installationDirectory {{ product_install_dir }}
+#    -acceptLicense
+#  become: yes
+#- name: Uninstall WebSphere
+#  command: >
+#    {{ was_default_imcl_dir }}/imcl uninstall {{ was_install_ver }} 
+#    -installationDirectory {{ product_install_dir }}
+#    -acceptLicense
+#  become: yes

@@ -1,0 +1,299 @@
+---
+#- name: Install packages
+#  yum:
+#    name: "{{ item }}"
+#    state: present
+#  loop: "{{ install_packages }}" 
+#  become: yes
+#
+#- name: Set kernel parameters
+#  sysctl:
+#    name: "{{ item.name }}"
+#    value: "{{ item.value }}"
+#    state: present
+#  loop: "{{ install_kernel_params }}"
+#  become: yes
+#
+#- name: Verify 90-nproc.conf existence
+#  stat:
+#    path: /etc/security/limits.d/90-nproc.conf
+#  register: stat_result
+#
+#### Fix this for production quality. If file exists, examine file and determine how to update properly.
+#- fail:
+#    msg: "Failing due to existance on 90-nproc.conf file..." 
+#  when: stat_result.stat.exists
+#
+#- name: Set ulimit
+#  pam_limits:
+#    domain: "{{ item.user }}"
+#    limit_type: "{{ item.limit_type }}"
+#    limit_item: "{{ item.limit_item }}"
+#    value: "{{ item.value }}"
+#  loop: "{{ install_ulimits }}" 
+#  when: not stat_result.stat.exists
+#  become: yes
+#
+#- name: verify ulimits
+#  shell: ulimit -a
+#  register: ulimit
+#- name: print ulimit
+#  debug:
+#    var: ulimit
+#
+##### Fix this code to work with loop variables
+##- name: Verify host1
+##  shell: grep "^{{ item.ip }}" /etc/hosts
+##  register: item_ip
+##  loop: "{{ Server_list }}"
+##  ignore_errors: True
+##
+##### Fix this code to work with loop variables
+##- name: Add baw_install to /etc/hosts file
+##  lineinfile:
+##    dest: /etc/hosts
+##    line: "{{ item.ip }}   {{ item.fqdn }}   {{ item.hostname }}"
+##  loop: "{{ server_list }}"
+##  when: item_ip is failed
+#
+#- name: Ensure SELinux is disabled
+#  lineinfile:
+#    path: /etc/selinux/config
+#    regexp: '^SELINUX='
+#    line: SELINUX=disabled
+#  become: yes
+#
+#- name: Verify selinux is disabled
+#  shell: cat /etc/selinux/config | grep SELINUX
+#
+#- name: Create directories with proper permissions
+#  file:
+#    path: "{{ item.path }}"
+#    mode: "{{ item.mode }}"
+#    state: directory
+#  loop: "{{ directory_structure}}"  
+#  become: yes
+#
+#### Make a requirement of this to the client so we do not have to deal with it
+### Increases file system size of /tmp to more than 1GB. 
+##- name: Set size of /tmp
+##  stat:
+##    path: /tmp
+##  register: _tmp_size 
+##- debug:
+##    var: _tmp_size.stdout
+#
+##- name: Download and extract BAW installer to /tmp
+##  unarchive:
+##    src: "{{ item }}"
+##    dest: "{{ baw_download_url }}"
+##    remote_src: yes
+##  retries: 3
+##  delay: 3
+##  loop: "{{ baw_download_url }}"
+##  become: yes
+##- name: Download BAW installer to /data/tmp
+##  get_url:
+##    url: 'https://ak-dsw-mul.dhe.ibm.com/sdfdl/v2/fulfill/CNTA0ML/Xa.2/Xb.ll8YenSwxvxSoxnfiA3E8Xt1blNONlBTTkU_PpljoeJJd3SwYFk/Xc.CNTA0ML/BAW_18_0_0_1_Linux_x86_1_of_3.tar.gz/Xd./Xf.lPr.A6VR/Xg.10907499/Xi./XY.sm/XZ.O7I0UCLInOafbVzHnyx0MH09L0U/BAW_18_0_0_1_Linux_x86_1_of_3.tar.gz#anchor'
+##    dest: /data/bpm 
+##    tmp_dest: TMPDIR
+##  become: yes 
+##  environment:
+##    TMPDIR: /data/tmp
+##- name: wget binaries
+##  command: "wget https://ak-dsw-mul.dhe.ibm.com/sdfdl/v2/fulfill/CNTA0ML/Xa.2/Xb.ll8YenSwxvxSoxnfiA3E8Xt1blNONlBTTkU_PpljoeJJd3SwYFk/Xc.CNTA0ML/BAW_18_0_0_1_Linux_x86_1_of_3.tar.gz/Xd./Xf.lPr.A6VR/Xg.10907499/Xi./XY.sm/XZ.O7I0UCLInOafbVzHnyx0MH09L0U/BAW_18_0_0_1_Linux_x86_1_of_3.tar.gz#anchor -P /data/bpm"
+##  become: yes
+##- name: wget binaries
+##  command: "wget {{ item }} -P {{ baw_download_path }}"
+##  become: yes
+##  loop: "{{ baw_download_url }}" 
+##- name: wget binaries
+##  command: >
+##    wget https://ak-dsw-mul.dhe.ibm.com/sdfdl/v2/fulfill/CNTA0ML/Xa.2/Xb.ll8YenSwxvxSoxnfiA3E8Xt1blNONlBTTkU_PpljoeJJd3SwYFk/Xc.CNTA0ML/BAW_18_0_0_1_Linux_x86_1_of_3.tar.gz/Xd./Xf.lPr.A6VR/Xg.10907499/Xi./XY.sm/XZ.O7I0UCLInOafbVzHnyx0MH09L0U/BAW_18_0_0_1_Linux_x86_1_of_3.tar.gz#anchor
+##    -P {{ baw_download_path }}
+##  become: yes
+##- name: wget binaries
+##  command: >
+##    wget https://ak-dsw-mul.dhe.ibm.com/sdfdl/v2/fulfill/CNTA1ML/Xa.2/Xb.ll8YenSwxvxSoxnfiA3E8Xt1blNONlBTTkU_PpljoeJJd8XuwfE/Xc.CNTA1ML/BAW_18_0_0_1_Linux_x86_2_of_3.tar.gz/Xd./Xf.lPr.A6VR/Xg.10907523/Xi./XY.sm/XZ.VhGbQ9kpZLcoSfd00PHbn1pybhk/BAW_18_0_0_1_Linux_x86_2_of_3.tar.gz#anchor 
+##    -P {{ baw_download_path }}
+##  become: yes
+##- name: wget binaries
+##  command: >
+##    wget https://ak-dsw-mul.dhe.ibm.com/sdfdl/v2/fulfill/CNTA2ML/Xa.2/Xb.ll8YenSwxvxSoxnfiA3E8Xt1blNONlBTTkU_PpljoeJJd3dycGk/Xc.CNTA2ML/BAW_18_0_0_1_Linux_x86_3_of_3.tar.gz/Xd./Xf.lPr.A6VR/Xg.10907524/Xi./XY.sm/XZ.-VlnrxdWZUzifoxIAuMtOn9nhiA/BAW_18_0_0_1_Linux_x86_3_of_3.tar.gz#anchor
+##    -P {{ baw_download_path }}
+##  become: yes
+##- name: Extract BAW installer to /data/bpm
+##  unarchive:
+##    src: "/data/bpm/BAW_18_0_0_1_Linux_x86_{{ item }}_of_3.tar.gz"
+##    dest: /data/bpm 
+##    remote_src: yes
+##  become: yes
+##  loop:
+##    - 1
+##    - 2
+##    - 3
+##- name: Download and extract BAW installer to /data/bpm
+##  unarchive:
+##    src: 'https://ak-dsw-mul.dhe.ibm.com/sdfdl/v2/fulfill/CNTA0ML/Xa.2/Xb.ll8YenSwxvxSoxnfiA3E8Xt1blNONlBTTkU_PpljoeJJd3SwYFk/Xc.CNTA0ML/BAW_18_0_0_1_Linux_x86_1_of_3.tar.gz/Xd./Xf.lPr.A6VR/Xg.10907499/Xi./XY.sm/XZ.O7I0UCLInOafbVzHnyx0MH09L0U/BAW_18_0_0_1_Linux_x86_1_of_3.tar.gz#anchor'
+##    dest: /data/bpm 
+##    remote_src: yes
+##  retries: 3
+##  delay: 3
+##  become: yes
+##- name: Download and extract BAW installer to /data/bpm
+##  unarchive:
+##    src: 'https://ak-dsw-mul.dhe.ibm.com/sdfdl/v2/fulfill/CNTA1ML/Xa.2/Xb.ll8YenSwxvxSoxnfiA3E8Xt1blNONlBTTkU_PpljoeJJd8XuwfE/Xc.CNTA1ML/BAW_18_0_0_1_Linux_x86_2_of_3.tar.gz/Xd./Xf.lPr.A6VR/Xg.10907523/Xi./XY.sm/XZ.VhGbQ9kpZLcoSfd00PHbn1pybhk/BAW_18_0_0_1_Linux_x86_2_of_3.tar.gz#anchor'
+##    dest: /data/bpm 
+##    remote_src: yes
+##  retries: 3
+##  delay: 3
+##  become: yes
+##- name: Download and extract BAW installer to /data/bpm
+##  unarchive:
+##    src: 'https://ak-dsw-mul.dhe.ibm.com/sdfdl/v2/fulfill/CNTA2ML/Xa.2/Xb.ll8YenSwxvxSoxnfiA3E8Xt1blNONlBTTkU_PpljoeJJd3dycGk/Xc.CNTA2ML/BAW_18_0_0_1_Linux_x86_3_of_3.tar.gz/Xd./Xf.lPr.A6VR/Xg.10907524/Xi./XY.sm/XZ.-VlnrxdWZUzifoxIAuMtOn9nhiA/BAW_18_0_0_1_Linux_x86_3_of_3.tar.gz#anchor'
+##    dest: /data/bpm 
+##    remote_src: yes
+##  retries: 3
+##  delay: 3
+##  become: yes
+#
+#- name: Accept license
+#  command: "{{ baw_download_path }}/IM64/installc -acceptLicense"
+#
+#- name: Install WAS Console
+#  command: >
+#    {{ im_path }}/imcl 
+#    install {{ was_install_ver }} 
+#    -repositories {{ was_repo }} 
+#    -InstallationDirectory {{ product_install_dir }} 
+#    -sharedResourcesDirectory {{ shared_res_dir }} 
+#    -properties {{ was_properties }}
+#    -acceptLicense -showProgress
+#  become: yes
+#
+### Not needed if defined in WAS installation command
+##- name: Setup java
+##  block:
+##    - name: Download and extract javasdk 
+##        unarchive:
+##        src: "{{ java_download_url }}"
+##        dest: "{{ javasdk_path }}"
+##        remote_src: yes
+##      register: result
+##      retries: 3
+##      delay: 3
+##      until: result is not failed
+##    - name: Configure javasdk 
+##      command: >
+##        {{ install_was_path }}/imcl
+##        install {{ java_install_ ver }} 
+##        -repositories {{ java_repo }}
+##        -InstallationDirectory {{ product_install_dir }}
+##        -acceptLicense -showProgress
+##  when: {{ was_properties does not contain java
+###
+#
+##    install {{ baw_install_ver }} com.ibm.bpm.ADV.v85 
+#- name: Install BAW
+#  command: >
+#    {{ was_default_imcl_dir }}/imcl install com.ibm.bpm.ADV.v85 
+#    -repositories {{ baw_repo }}
+#    -installationDirectory {{ product_install_dir }}
+#    -sharedResourcesDirectory {{ shared_res_dir }}
+#    -acceptLicense -showProgress
+#  become: yes
+#
+#- name: Validate packaging ID
+#  command: more repository.xml
+#  register: repo_xml
+#
+#- name: Print packaging ID
+#  debug:
+#    var: repo_xml
+#
+#- name: List available sdk
+#  command: "{{ product_install_dir }}/bin/managesdk.sh -listAvailable"
+#  register: list_sdk
+#
+#- name: Print list of available sdk's
+#  debug:
+#    var: list_sdk
+#
+#- name: Setting javasdk for new profiles
+#  command: "{{ product_install_dir }}/bin/managesdk.sh -setNewProfileDefault -sdkname {{ sdk_name }}"
+# 
+#- name: Copy files
+#  copy:
+#    src: "{{ product_install_dir }}/BPM/samples/config/{{ license_type | lower }}/{{ property_file_name }}"
+#    dest: "{{ user_home }}/{{ item }}"
+#    remote_src: true
+#  loop: 
+#    - "{{ property_file_name }}"
+#    - "{{ property_file_name }}_bkp"
+# 
+#- name: Edit {{ property_file_name }}
+#  lineinfile: 
+#    path: "{{ user_home}}/{{ property_file_name }}"
+#    regexp: "{{ item.regex }}"
+#    line: "{{ item.line }}"
+#  loop: "{{ license_type }}_{{ product_type }}_{{ cluster_type }}_{{ database_type }}_prop"
+#  become: yes
+#
+#- name: Create directories with proper permissions
+#  file:
+#    path: "{{ item }}"
+#    mode: "755"
+#    state: directory
+#  loop:
+#    - "{{ jdbcdriver_dir }}"
+#    - "{{ case_forms_dir }}"
+#  become: yes
+#
+#- name: Copy Oracle jdbcdrivers
+#  copy:
+#    src: "{{ user_home }}/{{ item }}"
+#    dest: "{{ jdbcdriver_dir }}"
+#    remote_src: true
+#  loop: "{{ oracle_driver_list }}"
+#  when: "{{ database_type }} == 'Oracle'"
+#
+#- name: Copy SQLServer jdbcdrivers
+#  copy:
+#    src: "{{ user_home }}/{{ item }}"
+#    dest: "{{ jdbcdriver_dir }}"
+#    remote_src: true
+#  loop: "{{ sqlserver_driver_list }}"
+#  when: "{{ database_type }} == 'SQLServer'"
+
+- name: Update property file
+  command: "{{ product_install_dir }}/bin/BPMConfig.sh -create -de {{ user_home }}/{{ property_file_name }}"
+  become: yes
+
+# Push all scripts in /product/bpm86/profiles/PCDmgr01/dbscripts/PCCell1.De1/Oracle/BPMD to client location
+# Develop later if needed 
+#- name: Copy files to client system location
+#  copy:
+#    scr: "{{ product_install_dir }}/profiles/PCDmgr01/dbscripts/PCCell1.De1/Oracle/BPMD"
+#    dest: "{{ client_db_dir }}"
+#    remote_src: true
+#  when: "{{ copy_db_files }}" 
+#
+- name: Start Manager
+  command: "{{ product_install_dir }}/profiles/{{ dmgr_profile_name }}/bin/startManager.sh"
+
+- name: Start node
+  command: "{{ product_install_dir }}/profiles/{{ node_profile_name }}/bin/startNode.sh"
+
+- name: bootstrap # rename, options according to {{ property_file_name }}
+  command: "{{ product_install_dir }}/profiles/{{ dmgr_profile_name }}/bin/bootstrapProcessServerData.sh -clusterName {{ cluster_name }}"
+  when: "{{ manual_db_steps }}"
+
+- name: Start server
+  command: "{{ product_install_dir }}/profiles/{{ node_profile_name }}/bin/startServer.sh {{ server_name }}"
+ 
+- debug:
+    # thhis prints to one line
+    msg: |
+      WAS server url-     https://{{ host_name }}:9043/ibm/console/login.do?action=secure
+      Process Portal url- https://{{ host_name }}:9443/ProcessPortal
+      Process Admin url-  https://{{ host_name }}:9443/ProcessAdmin

@@ -1,0 +1,8 @@
+---
+# defaults file for uninstall
+was_default_imcl_dir: /opt/IBM/InstallationManager/eclipse/tools
+product_install_dir: /product/bpm86
+was_install_ver: com.ibm.websphere.ND.v85
+dmgr_profile_name: Dmgrpc01
+node_profile_name: Nodepc01
+server_name: SingleClusterMember1
