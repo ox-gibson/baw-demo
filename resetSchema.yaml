@@ -1,0 +1,33 @@
+---
+- name: Install DB and BAW
+  hosts: db 
+  tasks: 
+    - name: Drop Schema
+      command: "db2 drop database {{ item }}"
+      loop:
+        - PCDOSDB
+        - PCTOSDB
+        - PCICNDB
+        - PCCMNDB
+        - PCBPMDB
+        - PCPDWDB
+    - name: Create Databases
+      command: "db2 -tvf /home/bpminst1/CreateDatabases/{{ item }}"
+      loop:
+        - createDatabaseBPMDB.sql
+        - createDatabaseCMNDB.sql
+        - createDatabasePDWDB.sql
+    - name: Upgrade Databases
+      command: "db2 -tvf /home/bpminst1/UpgradeScripts/{{ item }}"
+      ignore_errors: true
+      loop:
+        - createDatabase_DOS.sql
+        - createDatabase_ICN.sql
+        - createDatabase_TOS.sql
+    - name: Create Tablespaces
+      command: "db2 -tvf /home/bpminst1/UpgradeScripts/{{ item }}"
+      ignore_errors: true
+      loop:
+        - createTablespace_DOS.sql
+        - createTablespace_ICN.sql
+        - createTablespace_TOS.sql

@@ -1,0 +1,19 @@
+---
+- name: Install DB and BAW
+  hosts: baw 
+  become: yes
+  tasks: 
+    - include_role:
+        name: install
+    
+#    - include_role:
+#        name: upgrade
+#    
+#    - include_role:
+#        name: migrate
+#    
+#    - include_role:
+#        name: configure
+#    
+#    - include_role:
+#        name: tuning

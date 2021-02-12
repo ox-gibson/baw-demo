@@ -1,0 +1,6 @@
+---
+- name: Uninstall DB and BAW
+  hosts: "10.0.10.110"
+  tasks: 
+    - include_role:
+        name: uninstall
